@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Records</title>
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='a1.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        button {
+            height: 50px;
+            width: 300px;
+            margin-top: 10px;
+            background-color: rgba(77, 77, 80, 0.5);
+            border-color: rgb(154, 153, 161);
+            border-width: 3px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+        button:hover {
+            background-color: rgba(77, 77, 80, 1); /* Fully opaque */
+            border-color: white;
+            transform: scale(1.05); /* Slight zoom effect */
+        }
+        .hip {
+        max-height: 400px; /* Adjust height as needed */
+        width: 590px; /* Slightly larger to accommodate scrollbar */
+        overflow: auto;
+        border: 3px solid rgb(154, 153, 161);
+        border-radius: 10px;
+        background: rgba(77, 77, 80, 0.8);
+        padding: 10px;
+    }
+        .buttin2 {
+            height: 30px;
+            width: 100px;
+            margin-top: 10px;
+            background-color: rgba(77, 77, 80, 0.5);
+            border-color: rgb(154, 153, 161);
+            border-width: 3px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease-in-out
+        }
+        .buttin2:hover {
+            background-color: rgba(77, 77, 80, 1); /* Fully opaque */
+            border-color: white;
+            transform: scale(1.05); /* Slight zoom effect */
+        }
+        h2 {
+            text-decoration: underline;
+
+        }
+        h3 {
+            text-decoration: underline;
+        }
+        
+        
+
+        
+    </style>
+</head>
+<body>
+    <div class="hip">
+        <h2 style="text-align: center;">Features</h3><br><br>
+        <h3>Register</h3>
+        <p>The register option is used to store the facial information of the target people, once the camera window opens
+            press "space" to capture or press "exc" to exit
+        </p>
+        <h3>Start Session</h3>
+        <p>The start session option is used to start the attendance session, it automaticly creates the table of current day, additionaly
+            if the camera fails to recognis by chance the the attendance manager can use the unique number to manualy provide attendance
+        </p>
+        <h3>Record</h3>
+        <p>Record displays the monthly count of attendance of each person</p>
+        <h3>Clear</h3>
+        <p>Clear option clears all the previous facial data, however the attendance data needs to be cleared manyaly</p>
+        <h3>Feedback</h3>
+        <p>Feedback provides option for he used to suggest improvements and point out faults and let us know for the improvements</p>
+        <h3>About</h3>
+        <p>provides a gist about the software</p>
+    </div>
+    <button id="home" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 20px;right: 280px;" onclick="window.location.href='/'">Home</button>
+    <button id="Record" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 60px;right: 230px;"onclick="window.location.href='/rec'">Record</button>
+    <button id="Clear" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 100px;right: 180px;" onclick="window.location.href='/clear'">Clear</button>
+    <button id="Feedback" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 140px;right: 130px;" onclick="window.location.href='/feedback'">Feedback</button>
+    <button id="Help" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 180px;right: 80px;" >Help</button>
+    <button id="About" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 220px;right: 30px;" onclick="window.location.href='/about'">About</button>
+   
+</body>    
+</html>

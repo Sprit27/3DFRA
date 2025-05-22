@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Image</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='a1.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .button-container {
+            position: absolute;
+            bottom: 80px; /* Adjust to move buttons up or down */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button {
+            height: 50px;
+            width: 300px;
+            margin-top: 10px;
+            background-color: rgba(77, 77, 80, 0.5);
+            border-color: rgb(154, 153, 161);
+            border-width: 3px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+        button:hover {
+            background-color: rgba(77, 77, 80, 1); /* Fully opaque */
+            border-color: white;
+            transform: scale(1.05); /* Slight zoom effect */
+        }
+
+        .buttin2 {
+            height: 30px;
+            width: 100px;
+            margin-top: 10px;
+            background-color: rgba(77, 77, 80, 0.5);
+            border-color: rgb(154, 153, 161);
+            border-width: 3px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease-in-out
+        }
+        .buttin2:hover {
+            background-color: rgba(77, 77, 80, 1); /* Fully opaque */
+            border-color: white;
+            transform: scale(1.05); /* Slight zoom effect */
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button id="register">Register</button>
+        <button id="detect">Start Session</button>
+    </div>
+    <button id="home" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 20px;right: 280px;">Home</button>
+    <button id="Record" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 60px;right: 230px;">Record</button>
+    <button id="Clear" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 100px;right: 180px;">Clear</button>
+    <button id="Feedback" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 140px;right: 130px;">Feedback</button>
+    <button id="Help" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 180px;right: 80px;">Help</button>
+    <button id="About" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 220px;right: 30px;">About</button>
+
+    <script>
+        $(document).ready(function () {
+            $("#register").on("click", function () {
+                window.location.href = "/register";
+            });
+            $("#detect").on("click", function () {
+                window.location.href = "/recognise";
+            });
+            $("#Clear").on("click", function () {
+                window.location.href = "/clear";
+            });
+            $("#Record").on("click", function () {
+                window.location.href = "/rec";
+            });
+            $("#Feedback").on("click", function () {
+                window.location.href = "/feedback";
+            });
+            $("#Help").on("click", function () {
+                window.location.href = "/help";
+            });
+            $("#About").on("click", function () {
+                window.location.href = "/about";
+            });
+        });
+    </script>
+   
+</body>
+</html>

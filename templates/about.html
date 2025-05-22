@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Records</title>
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='a1.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        button {
+            height: 50px;
+            width: 300px;
+            margin-top: 10px;
+            background-color: rgba(77, 77, 80, 0.5);
+            border-color: rgb(154, 153, 161);
+            border-width: 3px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+        button:hover {
+            background-color: rgba(77, 77, 80, 1); /* Fully opaque */
+            border-color: white;
+            transform: scale(1.05); /* Slight zoom effect */
+        }
+        .hip {
+        max-height: 400px; /* Adjust height as needed */
+        width: 590px; /* Slightly larger to accommodate scrollbar */
+        overflow: auto;
+        border: 3px solid rgb(154, 153, 161);
+        border-radius: 10px;
+        background: rgba(77, 77, 80, 0.8);
+        padding: 10px;
+    }
+        .buttin2 {
+            height: 30px;
+            width: 100px;
+            margin-top: 10px;
+            background-color: rgba(77, 77, 80, 0.5);
+            border-color: rgb(154, 153, 161);
+            border-width: 3px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease-in-out
+        }
+        .buttin2:hover {
+            background-color: rgba(77, 77, 80, 1); /* Fully opaque */
+            border-color: white;
+            transform: scale(1.05); /* Slight zoom effect */
+        }
+        h2 {
+            text-decoration: underline;
+
+        }
+        h3 {
+            text-decoration: underline;
+        }
+        
+        
+
+        
+    </style>
+</head>
+<body>
+    <div class="hip">
+        <h2 style="text-align: center;">About</h3><br><br>
+          <p>Facial recognition is a field under deep learning, which is speedily evolving due to its numerous benefits, including automatic feature learning, the ability to handle large and complex data, scalability, high recognition accuracy, and many others, which allow it to recognize a face by matching many of parameters. The software traces numerous points on the camera-provided facial image and then scans various facial factors such as the distance between the cheeks, the displacement between the eyes, the depth around the eye, the distance from the hairline to the chin, the shape of the jaw, curvature of eyebrows, the relative position of various parts of the face, etc. The software then transforms and stores this data in mathematical form for using it in the future for face matching.
+            3D Face Recognition is a more advanced and efficient version of 2D Face Recognition. When assessing a face, 3D Face Recognition systems also take into consideration the depth factors such as the distance between the ears and the face, the height of the nose, the lighting conditions and so on. When a face emerges in front of the camera, the system compares the recorded data to that of the person in question. The person is accepted if their face matches on 90% parameters, otherwise the person is rejected. The advantage of 3D Face Recognition over the 2D version is that it can distinguish between a real person and a spoof image. On the other hand, basic 2D Face Recognition software will accept a person even if a photo of a specific person is provided to the camera, i.e. it will not distinguish between a genuine person's face and an image shown to it. This is because the 2D version only retains face data in two dimensions and could be deceived by a flat snapshot. This vulnerability might be utilized used by students or employees to obtain proxy attendance, or, in the worst-case situation, individuals with malicious intent could break the restricted area's protection by faking their facial identity.
+            Woody Bledsoe, Charles Bisson, and Helen Chan Wolf pioneered automated face recognition in 1960, with the goal of teaching computers to detect human faces. Throughout the years many evolutions have been done to the field of face recognition by updating its datasets and the facial recognition libraries. Many big and small organization have contributed in it by creating number of supporting libraries in various languages to enhance the system. Many languages such as JavaScript, Java, C++, and Python have supporting face recognition libraries which could be used to create the software. However, Python emerged as the most popular programming for face recognition, due to its versatility and ease of use, in addition to that Python even supports fast functioning libraries such as TensorFlow, OpenCV, and so on. Hence our 3D Facial Recognition for Attendance is a software based on python and its supporting libraries, to provide a faster and more accurate facial recognition. The advanced python libraries facilitate the software with depth calculating features which enable it to differ between a real image and a spoof. This allows it to rapidly identify and mark the arrival time of an employee or student, without allowing them to use a proxy photo to cheat the system. 
+            </p>
+       
+    </div>
+    <button id="home" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 20px;right: 280px;" onclick="window.location.href='/'">Home</button>
+    <button id="Record" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 60px;right: 230px;"onclick="window.location.href='/rec'">Record</button>
+    <button id="Clear" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 100px;right: 180px;" onclick="window.location.href='/clear'">Clear</button>
+    <button id="Feedback" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 140px;right: 130px;" onclick="window.location.href='/feedback'">Feedback</button>
+    <button id="Help" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 180px;right: 80px;" onclick="window.location.href='/help'">Help</button>
+    <button id="About" class="buttin2" style="position: absolute;display: flex;flex-direction: column;top: 220px;right: 30px;" >About</button>
+    
+    
+</body>    
+</html>
