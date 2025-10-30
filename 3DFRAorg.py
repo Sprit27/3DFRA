@@ -9,6 +9,7 @@ import pickle
 import numpy as np
 #from face_recn import store_face, recognize_faces
 #from dispy35 import recognize_faces_with_gui, att
+
 import face_recognition
 from Info import add_entry
 import tkinter as tk
@@ -255,6 +256,28 @@ def mark_attendance(unique_number):
     daily_attendance_table = datetime.now().strftime("%Y_%m_%d")  # Daily attendance table
 
     try:
+        # Ensure monthly table exists and user is in it
+        cursor.execute(f"""
+            CREATE TABLE IF NOT EXISTS "{attendance_table}" (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                unique_number INTEGER UNIQUE NOT NULL,
+                name TEXT NOT NULL,
+                Attendance_count INTEGER DEFAULT 0
+            )
+        """)
+        
+        # Check if user exists in monthly table, if not add them
+        cursor.execute(f"""
+            SELECT name FROM people WHERE unique_number = ?
+        """, (unique_number,))
+        user_data = cursor.fetchone()
+        
+        if user_data:
+            cursor.execute(f"""
+                INSERT OR IGNORE INTO "{attendance_table}" (unique_number, name, Attendance_count)
+                VALUES (?, ?, 0)
+            """, (unique_number, user_data[0]))
+        
         # Check if the unique_number has already been marked present today
         cursor.execute(f"""
             SELECT 1 FROM "{daily_attendance_table}" WHERE unique_number = ?
@@ -282,7 +305,9 @@ def mark_attendance(unique_number):
 
         conn.commit()
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error in mark_attendance: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
         conn.close()
 
@@ -321,7 +346,7 @@ def store_face(image_path, name):
         print(f"[ERROR] Could not read image: {image_path}")
         return
 
-    # Convert to RGB
+    # Convert to RGB properly
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     # Debugging: print info
@@ -332,16 +357,22 @@ def store_face(image_path, name):
         print("[ERROR] Image is not a 3-channel RGB image.")
         return
 
-    # Ensure dtype is uint8
+    # Ensure dtype is uint8 and contiguous
     if image_rgb.dtype != np.uint8:
         print("[ERROR] Image dtype is not uint8. Fixing it.")
         image_rgb = image_rgb.astype(np.uint8)
+    
+    # Make array contiguous in memory
+    image_rgb = np.ascontiguousarray(image_rgb, dtype=np.uint8)
 
     # Get face encodings
     try:
         encodings = face_recognition.face_encodings(image_rgb)
+        print(f"[DEBUG] Successfully generated {len(encodings)} face encodings")
     except Exception as e:
         print(f"[ERROR] face_recognition failed: {e}")
+        import traceback
+        traceback.print_exc()
         return
 
     if len(encodings) == 0:
@@ -364,6 +395,16 @@ def store_face(image_path, name):
         pickle.dump(known_faces, f)
 
     print(f"[INFO] Stored face encoding for {name}.")
+    print(f"[INFO] Total stored faces: {len(known_faces['names'])}")
+    print(f"[INFO] Stored names: {known_faces['names']}")
+    
+    # Verify the encoding was saved correctly
+    try:
+        with open(ENCODINGS_FILE, "rb") as f:
+            verify_faces = pickle.load(f)
+        print(f"[VERIFY] Successfully verified {len(verify_faces['names'])} faces in file")
+    except Exception as e:
+        print(f"[ERROR] Could not verify saved encodings: {e}")
 
 # Call the function to execute the data transfer
 import_people_to_session()
@@ -437,25 +478,42 @@ def recognize_faces_with_gui():
             print("Error: Unable to read from webcam.")
             return
 
-        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-        rgb_small_frame = small_frame[:, :, ::-1]
+        # Ensure frame is in correct format
+        if frame is None or frame.size == 0:
+            print("Error: Empty frame received.")
+            return
 
-        face_locations = face_recognition.face_locations(rgb_small_frame)
-        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        # Resize and convert to RGB properly
+        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+        rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+        
+        # Ensure the image is uint8 and contiguous
+        rgb_small_frame = np.ascontiguousarray(rgb_small_frame, dtype=np.uint8)
+
+        try:
+            face_locations = face_recognition.face_locations(rgb_small_frame)
+            face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        except Exception as e:
+            print(f"Face recognition error: {e}")
+            face_locations = []
+            face_encodings = []
 
         face_names = []
         for face_encoding in face_encodings:
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+            matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=0.6)
             name = "Unknown"
 
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             if len(face_distances) > 0:
                 best_match_index = np.argmin(face_distances)
-                if matches[best_match_index]:
+                if matches[best_match_index] and face_distances[best_match_index] < 0.6:
                     name = known_face_names[best_match_index]
+                    print(f"Face recognized: {name} (distance: {face_distances[best_match_index]:.3f})")
 
             face_names.append(name)
-            detected_names.add(name)
+            if name != "Unknown":
+                detected_names.add(name)
+                print(f"Added {name} to detected names")
 
         # Display results
         for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -489,11 +547,25 @@ def recognize_faces_with_gui():
         if name:
             detected_names.add(name)
             name_entry.delete(0, tk.END)
+            print(f"Manually added {name} to detected names")
+            
+            # Immediately mark attendance for manually added name
+            uno = get_unique_number_by_name(name)
+            if uno:
+                print(f"Marking attendance for manually added: {name} ({uno})")
+                mark_attendance(uno)
+            else:
+                print(f"No unique number found for manually added name: {name}")
 
     video_capture = cv2.VideoCapture(0)
     if not video_capture.isOpened():
         print("Error: Unable to access the webcam.")
         return
+    
+    # Set webcam properties for better compatibility
+    video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    video_capture.set(cv2.CAP_PROP_FPS, 30)
 
     root = tk.Tk()
     root.title("Face Recognition with Enhanced Anti-Spoofing")
@@ -546,18 +618,23 @@ def att():
 @app.route('/recognise')
 
 def recognise():
+    global detected_names
+    detected_names.clear()  # Clear previous session data
+    
     create_attendance_records()
     recognize_faces_with_gui()
     
     names = att()  # Get all detected names
+    print(f"Final detected names: {names}")
 
     for name in names:
         if name != "Unknown":  # Ignore unknown faces
             uno = get_unique_number_by_name(name)
             if uno:  # Ensure the unique number exists
                 print(f"Marking attendance for: {name} ({uno})")
-                
                 mark_attendance(uno)
+            else:
+                print(f"No unique number found for: {name}")
                 
 
     return redirect(url_for('home')) 
@@ -656,20 +733,20 @@ def about():
     
 
 if __name__ == '__main__':
-    #app.run(host='127.0.0.1',port=5000)
+    app.run(host='127.0.0.1',port=5000)
     #webview.create_window("Smart Face Attendance System", "http://127.0.0.1:5000")
     # Flask thread
-    def start_flask():
-        app.run(debug=False, use_reloader=False)
+    # def start_flask():
+    #     app.run(debug=False, use_reloader=False)
 
-    flask_thread = threading.Thread(target=start_flask)
-    flask_thread.daemon = True
-    flask_thread.start()
+    # flask_thread = threading.Thread(target=start_flask)
+    # flask_thread.daemon = True
+    # flask_thread.start()
 
-    # Wait for Flask to start up
-    time.sleep(2)
+    # # Wait for Flask to start up
+    # time.sleep(2)
 
-    # Then create and start the window
-    webview.create_window('3DFRA', 'http://127.0.0.1:5000', width=1200, height=800)
-    webview.start(gui='edgechromium')
+    # # Then create and start the window
+    # webview.create_window('3DFRA', 'http://127.0.0.1:5000', width=1200, height=800)
+    # webview.start(gui='edgechromium')
    
