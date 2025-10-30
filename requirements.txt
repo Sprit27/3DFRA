@@ -1,0 +1,18 @@
+# Python 3.12.6 Compatible Requirements
+opencv-python>=4.9.0
+Flask>=3.0.0
+numpy>=1.26.0
+Pillow>=10.2.0
+pywebview>=5.0.0
+
+# GUI backends for pywebview (Linux)
+PyGObject>=3.46.0
+PyQt5>=5.15.10
+qtpy>=2.4.1
+
+# Face recognition libraries
+face-recognition>=1.3.0
+dlib>=19.24.0
+
+# Build tools (only needed if compiling from source)
+cmake>=3.27.0
